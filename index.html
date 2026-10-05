@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <title>AR Barbie Flip Phone</title>
+
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    html,body { margin:0; overflow:hidden; font-family:Arial,sans-serif; }
+    #title {
+      position:fixed; z-index:20; top:14px; left:50%; transform:translateX(-50%);
+      padding:9px 15px; border-radius:20px; color:white;
+      background:rgba(190,20,110,.78); white-space:nowrap; pointer-events:none;
+    }
+    #openBtn {
+      display:none; position:fixed; z-index:30; left:50%; bottom:28px;
+      transform:translateX(-50%); border:0; border-radius:999px;
+      padding:13px 25px; font-size:17px; font-weight:bold;
+      color:white; background:#e91e8f; box-shadow:0 5px 18px rgba(0,0,0,.28);
+      cursor:pointer;
+    }
+    #openBtn:active { transform:translateX(-50%) scale(.96); }
+  </style>
+
+  <script>
+    AFRAME.registerComponent('barbie-flip-phone', {
+      init: function () {
+        const marker = this.el;
+        const button = document.getElementById('openBtn');
+        const lid = marker.querySelector('#lidPivot');
+        let open = false;
+
+        function setState(nextOpen) {
+          open = nextOpen;
+          lid.removeAttribute('animation__flip');
+          lid.setAttribute('animation__flip', {
+            property: 'rotation',
+            to: open ? '-112 0 0' : '0 0 0',
+            dur: 900,
+            easing: open ? 'easeOutBack' : 'easeInOutQuad'
+          });
+          button.textContent = open ? '💖 ปิดฝาพับ' : '✨ เปิดฝาพับ';
+        }
+
+        button.addEventListener('click', function () {
+          setState(!open);
+        });
+
+        marker.addEventListener('markerFound', function () {
+          button.style.display = 'block';
+        });
+
+        marker.addEventListener('markerLost', function () {
+          button.style.display = 'none';
+        });
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="title">💗 Barbie Style AR Flip Phone 💗</div>
+  <button id="openBtn">✨ เปิดฝาพับ</button>
+
+  <a-scene
+    embedded
+    vr-mode-ui="enabled:false"
+    renderer="antialias:true; colorManagement:true;"
+    arjs="sourceType:webcam; debugUIEnabled:false; detectionMode:mono; trackingMethod:best;">
+
+    <a-marker preset="hiro" barbie-flip-phone>
+
+      <!-- PHONE GROUP -->
+      <a-entity position="0 0.12 0.10" scale="0.78 0.78 0.78">
+
+        <!-- LOWER BODY -->
+        <a-box position="0 0.08 0.25"
+               width="1.10" height="0.15" depth="1.20"
+               color="#F062B0"
+               material="metalness:.25; roughness:.35">
+        </a-box>
+
+        <!-- inner pink panel -->
+        <a-box position="0 0.165 0.25"
+               width="0.96" height="0.025" depth="1.05"
+               color="#FFB4DA">
+        </a-box>
+
+        <!-- decorative heart -->
+        <a-entity position="0 0.195 0.67" rotation="-90 0 0">
+          <a-circle radius="0.09" color="#FF2D8D"></a-circle>
+        </a-entity>
+
+        <!-- KEYBOARD -->
+        <a-entity position="0 0.20 0.22">
+
+          <!-- row 1 -->
+          <a-box position="-0.31 0 -0.32" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position="0 0 -0.32" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position=".31 0 -0.32" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+
+          <!-- row 2 -->
+          <a-box position="-0.31 0 -0.09" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position="0 0 -0.09" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position=".31 0 -0.09" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+
+          <!-- row 3 -->
+          <a-box position="-0.31 0 .14" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position="0 0 .14" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position=".31 0 .14" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+
+          <!-- row 4 -->
+          <a-box position="-0.31 0 .37" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position="0 0 .37" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+          <a-box position=".31 0 .37" width=".23" height=".045" depth=".16" color="#FFF0F8"></a-box>
+
+          <!-- call / navigation -->
+          <a-box position="-.31 0 -.54" width=".25" height=".05" depth=".13" color="#79D77B"></a-box>
+          <a-cylinder position="0 0 -.54" radius=".09" height=".05" color="#FFFFFF"></a-cylinder>
+          <a-box position=".31 0 -.54" width=".25" height=".05" depth=".13" color="#FF568B"></a-box>
+        </a-entity>
+
+        <!-- HINGE -->
+        <a-cylinder position="0 .19 -.38" rotation="0 0 90"
+                    radius=".105" height=".94" color="#D81B7D"
+                    material="metalness:.6; roughness:.3">
+        </a-cylinder>
+
+        <!-- LID PIVOT -->
+        <a-entity id="lidPivot" position="0 .19 -.38" rotation="0 0 0">
+          <a-entity position="0 0 -.56">
+
+            <!-- upper lid -->
+            <a-box position="0 0 0"
+                   width="1.10" height=".15" depth="1.12"
+                   color="#F062B0"
+                   material="metalness:.25; roughness:.35">
+            </a-box>
+
+            <!-- INNER DISPLAY -->
+            <a-box position="0 -.087 .02"
+                   width=".78" height=".025" depth=".66"
+                   color="#9BE7FF"
+                   material="emissive:#3AAED8; emissiveIntensity:.65">
+            </a-box>
+
+            <!-- display decorations -->
+            <a-circle position="0 -.104 .02"
+                      rotation="90 0 0" radius=".12"
+                      color="#FF8CC8" opacity=".75">
+            </a-circle>
+
+            <!-- speaker -->
+            <a-box position="0 -.095 -.40"
+                   width=".34" height=".028" depth=".055"
+                   color="#9C145B">
+            </a-box>
+
+            <!-- camera -->
+            <a-sphere position=".32 -.10 -.37" radius=".035" color="#311028"></a-sphere>
+
+            <!-- OUTER COVER DETAILS visible while closed -->
+            <a-circle position="0 .082 0"
+                      rotation="-90 0 0" radius=".20"
+                      color="#FFB4DA">
+            </a-circle>
+            <a-circle position="0 .096 0"
+                      rotation="-90 0 0" radius=".11"
+                      color="#FFFFFF">
+            </a-circle>
+
+          </a-entity>
+        </a-entity>
+
+      </a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+</html>
